@@ -140,7 +140,7 @@ void display_elf_header(const Elf32_Ehdr *const elf_header)
    printf("Adresse du point d'entrée:                          %x\n", elf_header->e_entry);
    printf("Début des en-têtes de programme:                    %d (octets deans le fichier)\n", elf_header->e_phoff);
    printf("Début des en-têtes de section:                      %d (octets deans le fichier)\n", elf_header->e_shoff);
-   printf("Fanions:                                            %x", elf_header->e_flags);
+   printf("Fanions:                                            %x\n", elf_header->e_flags);
    printf("Taille de cet en-tête:                              %d (octets)\n", elf_header->e_ehsize);
    printf("Taille de l'en-tête du programme                    %d (octets)\n", elf_header->e_phentsize);
    printf("Nombre d'en-tête du programme:                      %d\n", elf_header->e_phnum);

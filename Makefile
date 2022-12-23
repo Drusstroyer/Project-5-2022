@@ -20,7 +20,10 @@ $(PATHEX)file1.elf:$(PATHEX)file1.o
 $(PATHEX)file2.elf:$(PATHEX)file2.o
 	$(ARM)$(ELF) $(CFLAGS) -I binary -O elf32-little $(PATHEX)file2.o $(PATHEX)file2.elf
 
+#to use this: make goelf ELF=main
 
+goelf :
+	arm-none-eabi-objcopy -I binary -O elf32-little $(ELF).o $(ELF).elf
 readelf1: $(PATHEX)file1.elf
 	$(ARM)$(READ) -h $(PATHEX)file1.elf
 

@@ -5,6 +5,10 @@ READ=readelf
 ELF=objcopy
 PATHEX=elf_linker-1.0/Examples_fusion/
 
+test: main.o elf_header.o sections_header.o
+	$(CC) $(CFLAGS) -o $@ $^
+%.o : %.c
+	$(CC) $(CFLAGS) -c $^
 $(PATHEX)file1.o:
 	$(ARM)$(CC) $(CFLAGS) -c $(PATHEX)file1.c $(PATHEX)file1.o
 $(PATHEX)file2.o:
@@ -17,17 +21,18 @@ $(PATHEX)file2.elf:$(PATHEX)file2.o
 	$(ARM)$(ELF) $(CFLAGS) -I binary -O elf32-little $(PATHEX)file2.o $(PATHEX)file2.elf
 
 
-
-elf_header.o: elf_header.h
-section_header.o: section_header.h
-
-
 readelf1: $(PATHEX)file1.elf
 	$(ARM)$(READ) -h $(PATHEX)file1.elf
 
 readelf2: $(PATHEX)file2.elf
 	$(ARM)$(READ) -h $(PATHEX)file2.elf
 
+main.o: sections_header.h elf_header.h 
+elf_header.o: elf_header.h 
+sections_header.o: sections_header.h 
+
+clean:
+	make clear
 clear:
-	rm ./*.o
-	rm ./*.elf
+	rm *.o
+	rm *.elf

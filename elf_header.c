@@ -1,12 +1,12 @@
 #include "elf_header.h"
 
-void load_elf_header(const FILE *const file, Elf32_Ehdr *const elf_header)
+void load_elf_header(FILE* file, Elf32_Ehdr * const elf_header)
 {
    fseek(file, 0, SEEK_SET);
    fread(elf_header, 1, sizeof(Elf32_Ehdr), file);
 }
 
-int check_magic_number(const Elf32_Ehdr *const elf_header)
+int check_magic_number(const Elf32_Ehdr * const elf_header)
 { /*check elf header magic numbers*/
    if (elf_header->e_ident[EI_MAG0] == ELFMAG0 && elf_header->e_ident[EI_MAG1 == ELFMAG1] && elf_header->e_ident[EI_MAG2 == ELFMAG2] && elf_header->e_ident[EI_MAG3 == ELFMAG3])
    {
@@ -15,7 +15,7 @@ int check_magic_number(const Elf32_Ehdr *const elf_header)
    return 0;
 }
 
-int check_object_validity(const Elf32_Ehdr *const elf_header)
+int check_object_validity(const Elf32_Ehdr * const elf_header)
 {
    /*check if object is valid (either 32 or 64 bits)*/
    if (!elf_header->e_ident[EI_CLASS] == ELFCLASSNONE)
@@ -25,7 +25,7 @@ int check_object_validity(const Elf32_Ehdr *const elf_header)
    return 0;
 }
 
-int check_data_validity(const Elf32_Ehdr *const elf_header)
+int check_data_validity(const Elf32_Ehdr * const elf_header)
 {
    /*check if data is valid*/
    if (!elf_header->e_ident[EI_DATA] == ELFDATANONE)
@@ -35,7 +35,7 @@ int check_data_validity(const Elf32_Ehdr *const elf_header)
    return 0;
 }
 
-int check_version_validity(const Elf32_Ehdr *const elf_header)
+int check_version_validity(const Elf32_Ehdr * const elf_header)
 {
    /*check if version is EV_CURRENT*/
    if (elf_header->e_ident[EI_VERSION] == EV_CURRENT)
@@ -76,8 +76,8 @@ int check_elf_header(const Elf32_Ehdr *const elf_header)
 
 void display_elf_header(const Elf32_Ehdr *const elf_header)
 {
-   printf("e_ident: %s", elf_header->e_ident);
-   printf("e_type: %d", elf_header->e_type);
+   printf("\ne_ident: %s", elf_header->e_ident);
+   printf("e_type: %d\n", elf_header->e_type);
    printf("ELF HEADER:\n");
 	switch(elf_header->e_machine){
 		case 0x0: printf("Machine: No Machine\n");break;
@@ -93,16 +93,16 @@ void display_elf_header(const Elf32_Ehdr *const elf_header)
 		default: printf("Machine: Reserved for future use\n");break;
 	}
    
-   printf("e_machine: %d", elf_header->e_machine);
-   printf("e_version: %d", elf_header->e_version);
-   printf("e_entry: %p", elf_header->e_entry);
-   printf("e_phoff: %p", elf_header->e_phoff);
-   printf("e_shoff: %p", elf_header->e_shoff);
-   printf("e_flags: %d", elf_header->e_flags);
-   printf("e_ehsize: %d", elf_header->e_ehsize);
-   printf("e_phentsize: %d", elf_header->e_phentsize);
-   printf("e_phnum: %d", elf_header->e_phnum);
-   printf("e_shentsize: %d", elf_header->e_shentsize);
-   printf("e_shnum: %d", elf_header->e_shnum);
-   printf("e_shstrndx: %d", elf_header->e_shstrndx);
+   printf("e_machine: %d\n", elf_header->e_machine);
+   printf("e_version: %d\n", elf_header->e_version);
+   printf("e_entry: %d\n", elf_header->e_entry);
+   printf("e_phoff: %d\n", elf_header->e_phoff);
+   printf("e_shoff: %d\n", elf_header->e_shoff);
+   printf("e_flags: %d\n", elf_header->e_flags);
+   printf("e_ehsize: %d\n", elf_header->e_ehsize);
+   printf("e_phentsize: %d\n", elf_header->e_phentsize);
+   printf("e_phnum: %d\n", elf_header->e_phnum);
+   printf("e_shentsize: %d\n", elf_header->e_shentsize);
+   printf("e_shnum: %d\n", elf_header->e_shnum);
+   printf("e_shstrndx: %d\n", elf_header->e_shstrndx);
 }

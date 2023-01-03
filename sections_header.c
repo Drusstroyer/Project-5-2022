@@ -67,6 +67,18 @@ void display_sections_header(Elf32_Ehdr* elf_header,Elf32_Shdr* sections_header,
       return content;
  }
 
+ char * ExtractName(char* FullName,int index)
+ {
+   int i=index;
+   while(FullName[i]!='\0')
+      i++;
+   char * name = malloc(i+1);
+   for(int j=index;j<i;j++)
+      name[j-index]=FullName[j];
+   return name;
+   
+ }
+
  char * ENUM_Flags(Elf32_Word flags)
  {
       //those flag show us if the section can allocate/exec or write

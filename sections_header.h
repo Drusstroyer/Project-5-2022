@@ -17,5 +17,7 @@ char * ENUM_Flags(Elf32_Word flags);
 
 SectionContent* GetContent(FILE* file,Elf32_Shdr section_header);
 
+char * ExtractName(char* FullName,int index);
+
 #endif
 

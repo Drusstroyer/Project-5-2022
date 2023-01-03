@@ -20,12 +20,12 @@ void display_sections_header(Elf32_Ehdr* elf_header,Elf32_Shdr* sections_header,
       printf("Il y a %i en-têtes de section, débutant à l'adresse de décalage 0x%X:\n\n",elf_header->e_shnum,elf_header->e_shoff);
       printf("En-têtes de section : \n");
       printf("  [Nr] Nom              Type            Adr      Décala.Taille ES Fan LN Inf Al\n");
-      for(int i=0;i<elf_header->e_shnum;i++)
+      for(int i=0;i<elf_header->e_shnum;i++) 
       {         
          printf("  [ %d] ",i);         
          if(TableName.size !=0)
          {
-            printf("%-16s",&TableName.content[sections_header[i].sh_name]); //read the first byte () in .strtab
+            printf("%-16s",&TableName.content[sections_header[i].sh_name]); //read the first byte in .strtab
          }
          else
          {
@@ -35,12 +35,12 @@ void display_sections_header(Elf32_Ehdr* elf_header,Elf32_Shdr* sections_header,
          printf(" %08X",sections_header[i].sh_addr); //Address if it's appear in memory (.bss)
          printf(" %06X",sections_header[i].sh_offset); //offset of the section from the beginning of the file
          printf(" %06X",sections_header[i].sh_size); //size of the section
-         printf(" %02i",sections_header[i].sh_entsize); //?? ES
+         printf(" %02X",sections_header[i].sh_entsize); //?? ES
          printf(" %s",ENUM_Flags(sections_header[i].sh_flags)); //Flags (Clé des fanions : voir readelf)
          printf("  %i",sections_header[i].sh_link); //for specific use (i think we will not use it)
-         if(sections_header[i].sh_link == 0)
+         if(sections_header[i].sh_link == 0 && sections_header[i].sh_type != SHT_REL && sections_header[i].sh_type != SHT_SYMTAB )
          {
-            printf("   0"); //Figure 1-12 indicate : other and sh_link=SHN_UNDEF so sh_link=0
+            printf("   0"); //Figure 1-12 show : other and sh_link=SHN_UNDEF so sh_link=0
          }
          else
          {

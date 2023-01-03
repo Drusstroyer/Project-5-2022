@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "elf_header.h"
+#include "sections_content.h"
 #include "sections_header.h"
 
 
@@ -26,6 +27,16 @@ int main(int argc, char* argv[])
     }
     
     display_sections_header(header,section_header,*TableContent);
+    int i=-1;
+    Elf32_Shdr h_symtab;
+    do
+    {
+        i++;
+        h_symtab = section_header[i];
+    }while(section_header[i].sh_type != SHT_SYMTAB);
+
+    Elf32_Sym* tmp=ReadSymbtab(h_symtab,(int)header->e_shnum,TableContent[i]);
+    ShowSymtab(tmp,header->e_shnum);
     fclose(f_elf);
     free(header);
     return 0;

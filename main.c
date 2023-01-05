@@ -70,8 +70,12 @@ int main(int argc, char* argv[])
             }
             else
             {
-                if(!strcmp(&SectionName->content[section_header[i].sh_name],".symtab"))            
-                    Symtab_index=i;                
+            if(!strcmp(&SectionName->content[section_header[i].sh_name],".symtab")){
+                Symtab_index=i;
+                h_symtab = section_header[i];
+            }            
+                    
+
             }                        
         }while(i<header->e_shnum);
         SectionContent* Content = GetContent(f_elf,section_header[Symtab_index]);
@@ -82,6 +86,7 @@ int main(int argc, char* argv[])
         if(strcmp(argv[j],"-sym")==0){
             ShowSymtab(tmp,header->e_shnum,*SectionName);
         }
+
 
     }
 

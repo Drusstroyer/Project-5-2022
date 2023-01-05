@@ -107,7 +107,7 @@ char * ENUM_TableSymbolNdx(Elf32_Half type)
          strcpy(c_half,"HIRESERVE");
          break;
       default: 
-         strcpy(c_half,"1");
+         sprintf(c_half, "%d",type);
          break;
    }
    return c_half;

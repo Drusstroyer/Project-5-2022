@@ -80,11 +80,11 @@ int main(int argc, char* argv[])
         }while(i<header->e_shnum);
         SectionContent* Content = GetContent(f_elf,section_header[Symtab_index]);
         SectionName=GetContent(f_elf,section_header[SymStringName_index]);
-        Elf32_Sym* tmp=ReadSymbtab(h_symtab,(int)header->e_shnum,Content);
+        Elf32_Sym* tmp=ReadSymbtab(h_symtab,Content);
         printf("\n");
 
         if(strcmp(argv[j],"-sym")==0){
-            ShowSymtab(tmp,header->e_shnum,*SectionName);
+            ShowSymtab(tmp,section_header[Symtab_index].sh_size/section_header[Symtab_index].sh_entsize,*SectionName);
         }
 
 

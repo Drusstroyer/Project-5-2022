@@ -1,27 +1,28 @@
 #include "sections_content.h"
 
-Elf32_Sym* ReadSymbtab(Elf32_Shdr sections_header,int nbSym, SectionContent* Content)
+Elf32_Sym* ReadSymbtab(Elf32_Shdr sections_header, SectionContent* Content)
 { 
-    Elf32_Sym * Symtab = malloc(sizeof(Elf32_Sym)*nbSym);
-    Symtab = (Elf32_Sym*)Content->content;
+    int size = sections_header.sh_size/sections_header.sh_entsize;
+    Elf32_Sym * Symtab = malloc(sizeof(Elf32_Sym)*size);
+    Symtab = (Elf32_Sym*)Content->content;   
     return Symtab;
 }
 
-void ShowSymtab(Elf32_Sym * symbol_tab,int nbSym,SectionContent SymbolName)
+void ShowSymtab(Elf32_Sym * symbol_tab,int size,SectionContent SymbolName)
 {    
-    printf("Symbol table \'.symtab\' contains %i entries:\n", nbSym);
-    printf("  Num:     Value  Size Type    Bind   Vis      Ndx Name\n");
-    for(int i=0; i< nbSym; i++)     //check boucle condition
+    printf("Symbol table \'.symtab\' contains %i entries:\n", size);
+    printf("  Num:     Value  Size Type    Bind   Vis      Ndx Name\n");    
+    for(int i=0; i< size; i++)     //check boucle condition
     {
-        printf("     %i:", i);
-        printf(" %08X", symbol_tab[i].st_value); //value of symbol
-        printf("%6i", symbol_tab[i].st_size); //his size
-        printf(" %-7s", ENUM_TableSymbolType(symbol_tab[i].st_info)); //type : SECTION, NOTYPE, ...
-        printf(" %-6s", ENUM_TableSymbolBinding(symbol_tab[i].st_info));
-        printf(" %3s",ENUM_TableSymbolVis(symbol_tab[i].st_other));// the rights
-        printf("  %3s",ENUM_TableSymbolNdx(symbol_tab[i].st_shndx)); //section index
-        printf(" %s",&SymbolName.content[symbol_tab[i].st_name]); //name
-        printf(" \n");
+        fprintf(stderr,"     %i:", i);
+        fprintf(stderr," %08X", symbol_tab[i].st_value); //value of symbol
+        fprintf(stderr,"%6i", symbol_tab[i].st_size); //his size
+        fprintf(stderr," %-7s", ENUM_TableSymbolType(symbol_tab[i].st_info)); //type : SECTION, NOTYPE, ...
+        fprintf(stderr," %-6s", ENUM_TableSymbolBinding(symbol_tab[i].st_info));
+        fprintf(stderr," %3s",ENUM_TableSymbolVis(symbol_tab[i].st_other));// the rights
+        fprintf(stderr,"  %3s",ENUM_TableSymbolNdx(symbol_tab[i].st_shndx)); //section index
+        fprintf(stderr," %s",&SymbolName.content[symbol_tab[i].st_name]); //name
+        fprintf(stderr," \n");
     }     
 }
 
@@ -106,8 +107,8 @@ char * ENUM_TableSymbolNdx(Elf32_Half type)
       case SHN_HIRESERVE:
          strcpy(c_half,"HIRESERVE");
          break;
-      default: 
-         sprintf(c_half, "%d",type);
+      default:             
+         sprintf(c_half, "%d", type);
          break;
    }
    return c_half;

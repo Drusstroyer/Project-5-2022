@@ -9,19 +9,9 @@ test: main.o elf_header.o sections_header.o sections_content.o
 	$(CC) $(CFLAGS) -o $@ $^
 %.o : %.c
 	$(CC) $(CFLAGS) -c $^
-$(PATHEX)file1.o:
-	$(ARM)$(CC) $(CFLAGS) -c $(PATHEX)file1.c $(PATHEX)file1.o
-$(PATHEX)file2.o:
-	$(ARM)$(CC) $(CFLAGS) -c $(PATHEX)file2.c $(PATHEX)file2.o
-
-$(PATHEX)file1.elf:$(PATHEX)file1.o
-	$(ARM)$(ELF) $(CFLAGS) -I binary -O elf32-little $(PATHEX)file1.o $(PATHEX)file1.elf
-
-$(PATHEX)file2.elf:$(PATHEX)file2.o
-	$(ARM)$(ELF) $(CFLAGS) -I binary -O elf32-little $(PATHEX)file2.o $(PATHEX)file2.elf
 
 goelf :
-	arm-none-eabi-objcopy -I binary -O elf32-little $(ELF).o $(ELF).elf
+	arm-none-eabi-gcc -c $(ELF)
 readelf1: $(PATHEX)file1.elf
 	$(ARM)$(READ) -h $(PATHEX)file1.elf
 

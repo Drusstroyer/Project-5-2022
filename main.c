@@ -96,13 +96,12 @@ int main(int argc, char *argv[])
             {
                 Reltab_index = i;
             }
-        }
-        while (i < header->e_shnum);
+        } while (i < header->e_shnum);
         SectionContent *Content = GetContent(f_elf, section_header[Symtab_index]);
         SectionContent *SymbolName = GetContent(f_elf, section_header[SymStringName_index]);
         Elf32_Sym *tmp = ReadSymbtab(h_symtab, Content);
 
-        Elf32_Rel *reloc_tab = ReadReltab(f_elf, section_header, Reltab_index);
+        // Elf32_Rel *reloc_tab = ReadReltab(f_elf, section_header, Reltab_index);
         printf("\n");
 
         if (strcmp(argv[j], "-sym") == 0)
@@ -111,7 +110,21 @@ int main(int argc, char *argv[])
         }
         if (strcmp(argv[j], "-rel") == 0)
         {
-            ShowReltab(reloc_tab, section_header[Reltab_index].sh_size / section_header[Reltab_index].sh_entsize, *Content, *SymbolName, tmp, section_header);
+            // while () //contion pour afficher tous les sections .rel/.rela
+            // {
+                if (section_header[Reltab_index].sh_type == SHT_RELA)
+                {
+                    Elf32_Rela *reloc_tab = ReadRelatab(f_elf, section_header, Reltab_index);
+                    printf("\n");
+                    ShowRelatab(reloc_tab, section_header[Reltab_index].sh_size / section_header[Reltab_index].sh_entsize, *Content, *SymbolName, tmp, section_header, *SectionName);
+                }
+                else if (section_header[Reltab_index].sh_type == SHT_REL)
+                {
+                    Elf32_Rel *reloc_tab_rel = ReadReltab(f_elf, section_header, Reltab_index);
+                    printf("\n");
+                    ShowReltab(reloc_tab_rel, section_header[Reltab_index].sh_size / section_header[Reltab_index].sh_entsize, *Content, *SymbolName, tmp, section_header, *SectionName);
+                }
+            // }
         }
         SectionContent *section_cont = ReadAllSections(f_elf, section_header, header->e_shnum, *SectionName);
         if (strcmp(argv[j], "-X") == 0)

@@ -11,10 +11,15 @@
 // Elf32_Rela* ReadReloctab(Elf32_Shdr sections_header,int nbRel, SectionContent* Content);
 // void ShowReloctab(Elf32_Rela * symbol_tab,int nbRel, SectionContent RelName);
 
-Elf32_Rela* ReadRelatab(Elf32_Shdr sections_header,int nbRel, SectionContent* Content);
-Elf32_Rel* ReadReltab(Elf32_Shdr sections_header, int nbRel, SectionContent* Content);
+Elf32_Rela * ReadReloctab(FILE * f_elf, Elf32_Shdr * section_header, Elf32_Shdr h_symtab, int Reltab_index);
 
-void ShowRelatab(Elf32_Rela * reloc_tab, int nbRel, SectionContent RelName);
-void ShowReltab(Elf32_Rel * reloc_tab, int nbRel, SectionContent RelName);
+// Elf32_Rela* ReadRelatab(Elf32_Shdr sections_header,int nbRel, SectionContent* Content);
+// Elf32_Rel* ReadReltab(Elf32_Shdr sections_header, int nbRel, SectionContent* Content);
 
+void ShowReloctab(Elf32_Rela * reloc_tab, Elf32_Shdr * section_header, int Reltab_index, SectionContent Content, SectionContent SymbolName);
+
+void ShowRelatab(Elf32_Rela * reloc_tab, int nbRel, SectionContent Content, SectionContent SymbolName);
+void ShowReltab(Elf32_Rel * reloc_tab, int nbRel, SectionContent Content, SectionContent SymbolName);
+
+char * ENUM_TableRelocType(Elf32_Word type);
 #endif

@@ -76,7 +76,7 @@ int check_elf_header(const Elf32_Ehdr *const elf_header)
 
 void display_elf_header(const Elf32_Ehdr *const elf_header)
 {
-   printf("\ne_ident: %s", elf_header->e_ident);
+   printf("\ne_ident: %s\n", elf_header->e_ident);
    printf("e_type: %d\n", elf_header->e_type);
    printf("ELF HEADER:\n");
 	switch(elf_header->e_machine){

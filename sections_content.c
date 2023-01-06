@@ -1,5 +1,29 @@
 #include "sections_content.h"
 
+SectionContent* ReadAllSections(FILE* file,Elf32_Shdr* section_header, int nb,SectionContent SectionName)
+{
+    SectionContent* section_cont = malloc(sizeof(SectionContent)*nb);
+    for(int i=0;i<nb;i++)
+    {
+      section_cont[i]=*GetContent(file,section_header[i]);  
+      section_cont[i].name=ExtractName(SectionName.content,section_header[i].sh_name);
+    }
+    return section_cont;
+}
+
+void disp_section_content(SectionContent * section,int size){   
+   for (int i=1;i<size;i++){ //one section per time
+      fprintf(stderr," %s\n", section[i].name);
+      fprintf(stderr," %i\n", section[i].size);
+      for(int j=0;j<section[i].size;j++)
+      {
+         printf("%04X ",section[i].content[j]);                     
+         if(j%8==0)
+            printf("\n");
+      }
+   }
+}
+
 Elf32_Sym* ReadSymbtab(Elf32_Shdr sections_header, SectionContent* Content)
 { 
     int size = sections_header.sh_size/sections_header.sh_entsize;

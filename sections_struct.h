@@ -3,6 +3,7 @@
 
 typedef struct t_SectionContent
 {
+    char* name;
     char* content;
     int size;
 }SectionContent;

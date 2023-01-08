@@ -1,5 +1,6 @@
 #ifndef S_STRUCT
 #define S_STRUCT
+#include <elf.h>
 
 typedef struct t_SectionContent
 {
@@ -7,5 +8,11 @@ typedef struct t_SectionContent
     char* content;
     int size;
 }SectionContent;
+
+typedef struct t_FusionContent
+{
+    Elf32_Shdr* headers;
+    SectionContent* contents;
+}FusionContent;
 
 #endif

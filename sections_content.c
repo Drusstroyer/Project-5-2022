@@ -11,10 +11,33 @@ SectionContent* ReadAllSections(FILE* file,Elf32_Shdr* section_header, int nb,Se
     return section_cont;
 }
 
+char * CopyContent(SectionContent Section)
+{
+   //copy the content of a section
+   char * result = malloc(Section.size);
+   for(int i=0;i<Section.size;i++)
+      result[i]=Section.content[i];
+   return result;
+}
+
+ SectionContent* GetContent(FILE * file,Elf32_Shdr section_header)
+ {    
+      //get the content of the section from file
+      SectionContent* content=malloc(sizeof(SectionContent));
+      if(section_header.sh_size)
+      {
+         content->content = malloc(section_header.sh_size);
+         content->size=section_header.sh_size;
+         fseek(file,section_header.sh_offset,SEEK_SET);
+         fread(content->content,section_header.sh_size,1,file);
+      }
+      return content;
+ }
+
 void disp_section_content(SectionContent * section,int size){   
    for (int i=1;i<size;i++){ //one section per time
-      fprintf(stderr," %s\n", section[i].name);
-      fprintf(stderr," %i\n", section[i].size);
+      fprintf(stdout," %s\n", section[i].name);
+      fprintf(stdout," %i\n", section[i].size);
       for(int j=0;j<section[i].size;j++)
       {
          printf("%04X ",section[i].content[j]);                     
@@ -38,15 +61,15 @@ void ShowSymtab(Elf32_Sym * symbol_tab,int size,SectionContent SymbolName)
     printf("  Num:     Value  Size Type    Bind   Vis      Ndx Name\n");    
     for(int i=0; i< size; i++)     //check boucle condition
     {
-        fprintf(stderr,"     %i:", i);
-        fprintf(stderr," %08X", symbol_tab[i].st_value); //value of symbol
-        fprintf(stderr,"%6i", symbol_tab[i].st_size); //his size
-        fprintf(stderr," %-7s", ENUM_TableSymbolType(symbol_tab[i].st_info)); //type : SECTION, NOTYPE, ...
-        fprintf(stderr," %-6s", ENUM_TableSymbolBinding(symbol_tab[i].st_info));
-        fprintf(stderr," %3s",ENUM_TableSymbolVis(symbol_tab[i].st_other));// the rights
-        fprintf(stderr,"  %3s",ENUM_TableSymbolNdx(symbol_tab[i].st_shndx)); //section index
-        fprintf(stderr," %s",&SymbolName.content[symbol_tab[i].st_name]); //name
-        fprintf(stderr," \n");
+        fprintf(stdout,"     %i:", i);
+        fprintf(stdout," %08X", symbol_tab[i].st_value); //value of symbol
+        fprintf(stdout,"%6i", symbol_tab[i].st_size); //his size
+        fprintf(stdout," %-7s", ENUM_TableSymbolType(symbol_tab[i].st_info)); //type : SECTION, NOTYPE, ...
+        fprintf(stdout," %-6s", ENUM_TableSymbolBinding(symbol_tab[i].st_info));
+        fprintf(stdout," %3s",ENUM_TableSymbolVis(symbol_tab[i].st_other));// the rights
+        fprintf(stdout,"  %3s",ENUM_TableSymbolNdx(symbol_tab[i].st_shndx)); //section index
+        fprintf(stdout," %s",&SymbolName.content[symbol_tab[i].st_name]); //name
+        fprintf(stdout," \n");
     }     
 }
 

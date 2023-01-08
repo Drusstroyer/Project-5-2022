@@ -53,20 +53,6 @@ void display_sections_header(Elf32_Ehdr* elf_header,Elf32_Shdr* sections_header,
       }
  }
 
- SectionContent* GetContent(FILE * file,Elf32_Shdr section_header)
- {    
-      //get the content of the section from file
-      SectionContent* content=malloc(sizeof(SectionContent));
-      if(section_header.sh_size)
-      {
-         content->content = malloc(section_header.sh_size);
-         content->size=section_header.sh_size;
-         fseek(file,section_header.sh_offset,SEEK_SET);
-         fread(content->content,section_header.sh_size,1,file);
-      }
-      return content;
- }
-
  char * ExtractName(char* FullName,int index)
  {
    int i=index;

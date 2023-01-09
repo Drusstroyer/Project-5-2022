@@ -3,6 +3,7 @@
 #include <elf.h>
 #include "elf_linker-1.0/util.h"
 #include <stdio.h>
+#include "sections_struct.h"
 
 
 void load_elf_header(FILE* file, Elf32_Ehdr * const elf_header);

@@ -64,6 +64,20 @@ void display_sections_header(Elf32_Ehdr* elf_header,Elf32_Shdr* sections_header,
    return name;
    
  }
+ 
+ int GetHeader(SectionContent Names,Elf32_Shdr * Sections,const char * section_name,int nbsections)
+ {
+   int i=0;
+   do
+   {
+      i++;                
+      if(!strcmp(&Names.content[Sections[i].sh_name],section_name))
+      {            
+            return i;
+      }                       
+   }while(i<nbsections);
+   return -1;
+ }
 
  char * ENUM_Flags(Elf32_Word flags)
  {

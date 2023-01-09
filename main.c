@@ -73,35 +73,17 @@ int main(int argc, char* argv[])
         
         if(strcmp(argv[j],"-S")==0){
             display_sections_header(header,section_header,*SectionName);
-        }
-        int i=-1;
-        int Symtab_index=-1;
-        int SymStringName_index=-1;
+        }        
+        int Symtab_index=GetHeader(*SectionName,section_header,".symtab",header->e_shnum);    
         Elf32_Shdr h_symtab;            
-        do
-        {
-            i++;                
-            if(!strcmp(&SectionName->content[section_header[i].sh_name],".strtab"))
-            {            
-                SymStringName_index = i;
-            }
-            else
-            {
-            if(!strcmp(&SectionName->content[section_header[i].sh_name],".symtab")){
-                Symtab_index=i;
-                h_symtab = section_header[i];
-            }            
-                    
-            }                        
-
-        }while(i<header->e_shnum);
-        SectionContent* Content = GetContent(f_elf,section_header[Symtab_index]);
-        SectionContent* SymbolName=GetContent(f_elf,section_header[SymStringName_index]);
-        Elf32_Sym* tmp=ReadSymbtab(h_symtab,Content);
+        h_symtab = section_header[Symtab_index];        
+        SectionContent* Symbols = GetContent(f_elf,section_header[Symtab_index]);
+        SectionContent* SymbolsName=GetContent(f_elf,section_header[GetHeader(*SectionName,section_header,".strtab",header->e_shnum)]);
+        Elf32_Sym* tmp=ReadSymbtab(h_symtab,Symbols);
         printf("\n");
 
         if(strcmp(argv[j],"-sym")==0){
-            ShowSymtab(tmp,section_header[Symtab_index].sh_size/section_header[Symtab_index].sh_entsize,*SymbolName);
+            ShowSymtab(tmp,section_header[Symtab_index].sh_size/section_header[Symtab_index].sh_entsize,*SymbolsName);
         }
         
         SectionContent* section_cont = ReadAllSections(f_elf,section_header,header->e_shnum,*SectionName);

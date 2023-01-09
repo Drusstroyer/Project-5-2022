@@ -13,6 +13,7 @@ typedef struct t_FusionContent
 {
     Elf32_Shdr* headers;
     SectionContent* contents;
+    int nb;
 }FusionContent;
 
 #endif

@@ -16,6 +16,8 @@ char * ENUM_SectionHeaderType(Elf32_Word type);
 char * ENUM_Flags(Elf32_Word flags);
 
 char * ExtractName(char* FullName,int index);
+int GetHeader(SectionContent Names,Elf32_Shdr * Sections,const char * section_name,int nbsections);
+
 
 #endif
 

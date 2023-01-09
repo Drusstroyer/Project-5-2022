@@ -1,5 +1,6 @@
 #include "sections_relocation.h"
 
+
 Elf32_Rela *ReadRelatab(FILE *f_elf, Elf32_Shdr *section_header, int Reltab_index)
 {
    SectionContent *Content = GetContent(f_elf, section_header[Reltab_index]); // name stocked in content->name
@@ -27,27 +28,6 @@ Elf32_Rel *ReadReltab(FILE *f_elf, Elf32_Shdr *section_header, int Reltab_index)
    reloc_tab = (Elf32_Rel *)Content->content;
    return reloc_tab;
 }
-// Elf32_Rela* ReadRelatab(Elf32_Shdr sections_header,int nbRel, SectionContent* Content)
-// {
-//     Elf32_Rela * reloc_tab = malloc(sizeof(Elf32_Rel)*nbRel);
-//     if(!reloc_tab){
-//         perror("Error: ");
-//         exit(1);
-//     }
-//     reloc_tab = (Elf32_Rela*)Content->content;
-//     return reloc_tab;
-// }
-
-// Elf32_Rel* ReadReltab(Elf32_Shdr sections_header, int nbRel, SectionContent* Content)
-// {
-//     Elf32_Rel * reloc_tab = malloc(sizeof(Elf32_Rel)*nbRel);
-//     if(!reloc_tab){
-//         perror("Error: ");
-//         exit(1);
-//     }
-//     reloc_tab = (Elf32_Rel*)Content->content;
-//     return reloc_tab;
-// }
 
 // void ShowReloctab(Elf32_Rela *reloc_tab, Elf32_Shdr *section_header, int Reltab_index, SectionContent Content, SectionContent SymbolName)
 // {
@@ -65,7 +45,7 @@ Elf32_Rel *ReadReltab(FILE *f_elf, Elf32_Shdr *section_header, int Reltab_index)
 //    }
 // }
 
-void ShowRelatab(Elf32_Rela *reloc_tab, int nbRel, SectionContent Content, SectionContent SymbolName, Elf32_Sym *symbol_tab, Elf32_Shdr *section_header, SectionContent SectionName)
+void ShowRelatab(Elf32_Rela *reloc_tab, int nbRel, SectionContent SymbolName, Elf32_Sym *symbol_tab, Elf32_Shdr *section_header, SectionContent SectionName)
 {
    printf("Relocation section \'.rela.text\' at offset 0x%x contains %i entries:\n", reloc_tab->r_offset, nbRel);
    printf("  Offset          Info           Type           Sym. Value    Sym. Name + Addend\n");
@@ -93,7 +73,7 @@ void ShowRelatab(Elf32_Rela *reloc_tab, int nbRel, SectionContent Content, Secti
    }
 }
 
-void ShowReltab(Elf32_Rel *reloc_tab, int nbRel, SectionContent Content, SectionContent SymbolName, Elf32_Sym *symbol_tab, Elf32_Shdr *section_header, SectionContent SectionName)
+void ShowReltab(Elf32_Rel *reloc_tab, int nbRel, SectionContent SymbolName, Elf32_Sym *symbol_tab, Elf32_Shdr *section_header, SectionContent SectionName)
 {
    printf("Relocation section \'.rel.text\' at offset 0x%x contains %i entries:\n", reloc_tab->r_offset, nbRel);
    printf(" Offset     Info    Type            Sym.Value  Sym. Name\n");

@@ -4,6 +4,7 @@
 #include "elf_header.h"
 #include "sections_header.h"
 #include "sections_struct.h"
+#include "sections_content.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>

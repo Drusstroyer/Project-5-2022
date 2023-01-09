@@ -81,22 +81,12 @@ int main(int argc, char *argv[])
         int Reltab_array[100];
         int Reltab_array_index=0;
         char s[5]=".";
-        char *token;
-        int SymStringName_index = -1;
+        char *token;        
         Elf32_Shdr h_symtab;
         do
         {
             i++;
-            if (!strcmp(&SectionName->content[section_header[i].sh_name], ".strtab"))
-            {
-                SymStringName_index = i;
-            }
-            else if (!strcmp(&SectionName->content[section_header[i].sh_name], ".symtab"))
-            {
-                Symtab_index = i;
-                h_symtab = section_header[i];
-            }
-            if(&SectionName->content[section_header[i].sh_name+1] != ""){
+            if(!strcmp(&SectionName->content[section_header[i].sh_name+1],"")){
                 token = strtok(&SectionName->content[section_header[i].sh_name+1],s);
             }
             if ((strcmp(token, ".rel")))    //a verifier .rel au lieu de .text
@@ -105,8 +95,11 @@ int main(int argc, char *argv[])
                 Reltab_array_index++;
             }
         } while (i < header->e_shnum);
+        int Symtab_index=GetHeader(*SectionName,section_header,".symtab",header->e_shnum);    
+        h_symtab = section_header[Symtab_index];        
         SectionContent *Content = GetContent(f_elf, section_header[Symtab_index]);
-        SectionContent *SymbolName = GetContent(f_elf, section_header[SymStringName_index]);
+        SectionContent* SymbolsName=GetContent(f_elf,section_header[GetHeader(*SectionName,section_header,".strtab",header->e_shnum)]);
+
         Elf32_Sym *tmp = ReadSymbtab(h_symtab, Content);
 
         // Elf32_Rel *reloc_tab = ReadReltab(f_elf, section_header, Reltab_array);

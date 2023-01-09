@@ -15,10 +15,12 @@ void FusionFile(FILE* file1, FILE* file2)
     SectionContent SectionName2=*GetContent(file2,section_header2[header2.e_shstrndx]);
     SectionContent* SectionFile1=ReadAllSections(file1,section_header1,header1.e_shnum,SectionName1);
     SectionContent* SectionFile2=ReadAllSections(file2,section_header2,header2.e_shnum,SectionName2);
-    FusionSectionProgBits(section_header1,SectionFile1,section_header2,SectionFile2,header1.e_shnum,header2.e_shnum);
-    //Elf32_Ehdr new_header;
+    printf("Fusion: Progbits\n");
+    FusionContent ProgBits=*FusionSectionProgBits(section_header1,SectionFile1,section_header2,SectionFile2,header1.e_shnum,header2.e_shnum);
+    Elf32_Ehdr new_header;
 
-    //new_header.e_shnum=ProgBits.nb;
+    memcpy(&new_header,&header1,sizeof(Elf32_Ehdr));
+    new_header.e_shnum=ProgBits.nb;
     //new_header.e_shstrndx=GetHeader(*SectionName,section_header,".symtab",NewContents.nb); //it will not change
 
     //display_sections_header(&new_header,ProgBits.headers,ProgBits.contents[new_header.e_shstrndx]);
@@ -51,6 +53,7 @@ FusionContent* FusionSectionProgBits(Elf32_Shdr* SectionHeader1,SectionContent* 
                     b_exist=1;
                     SectionFusion[i].size=Section1[i].size+Section2[j].size;     
                     HeaderFusion[i].sh_size=Section1[i].size+Section2[j].size;  
+                    HeaderFusion[i].sh_name=last_index_name;
                     buffsize+=Section2[j].size;        
                     SectionFusion[i].name=malloc(strlen(Section1[i].name));
                     strcpy(SectionFusion[i].name,Section1[i].name);
@@ -71,6 +74,8 @@ FusionContent* FusionSectionProgBits(Elf32_Shdr* SectionHeader1,SectionContent* 
                 SectionFusion[i].size=Section1[i].size;
                 SectionFusion[i].content = CopyContent(Section1[i]);
                 SectionFusion[i].name=malloc(strlen(Section1[i].name));
+                HeaderFusion[i].sh_name=last_index_name;
+                HeaderFusion[i].sh_size=Section1[i].size;
                 strcpy(SectionFusion[i].name,Section1[i].name);
                 strcpy(&New_Names[last_index_name],Section1[i].name);
                 last_index_name+=strlen(Section1[i].name)+1;    
@@ -82,12 +87,15 @@ FusionContent* FusionSectionProgBits(Elf32_Shdr* SectionHeader1,SectionContent* 
             SectionFusion[i].size=Section1[i].size;
             SectionFusion[i].content = CopyContent(Section1[i]);
             SectionFusion[i].name=malloc(strlen(Section1[i].name));
+            HeaderFusion[i].sh_size=Section1[i].size;
+            HeaderFusion[i].sh_name=last_index_name;
             strcpy(SectionFusion[i].name,Section1[i].name);
             strcpy(&New_Names[last_index_name],Section1[i].name);
             last_index_name+=strlen(Section1[i].name)+1;    
-        }
+        }        
         b_exist=0;
     }
+    
     int j=0;
     for(int i=0;i<nbSection1;i++){
         if (SectionHeader1[i].sh_type==SHT_PROGBITS){
@@ -101,6 +109,8 @@ FusionContent* FusionSectionProgBits(Elf32_Shdr* SectionHeader1,SectionContent* 
                 if(!HeaderFusion[n_size+nbSection1].sh_offset%HeaderFusion[n_size+nbSection1].sh_addralign)
                     buffsize+=(4-HeaderFusion[n_size+nbSection1].sh_offset%HeaderFusion[n_size+nbSection1].sh_addralign);
                 HeaderFusion[n_size+nbSection1].sh_offset+=buffsize;
+                HeaderFusion[i].sh_size=Section1[i].size;
+                HeaderFusion[i].sh_name=last_index_name;
                 SectionFusion[n_size+nbSection1].name=malloc(strlen(Section2[j].name));
                 strcpy(SectionFusion[n_size+nbSection1].name,Section2[j].name);
                 strcpy(&New_Names[last_index_name],Section1[i].name);
@@ -110,17 +120,17 @@ FusionContent* FusionSectionProgBits(Elf32_Shdr* SectionHeader1,SectionContent* 
                 buffsize+=Section2[j].size;
             }
         }
-    }
-    New_Names = realloc(New_Names,last_index_name);
-    SectionContent temp;
-    temp.content=New_Names;
-    temp.size=last_index_name;
-    int SectionNamesIndex=GetHeader(temp,HeaderFusion,".shstrtab",n_size+nbSection1);
+    }  
+    SectionContent* temp =malloc(sizeof(SectionContent));
+    New_Names = realloc(New_Names,last_index_name+1);
+    temp->content=New_Names;
+    temp->size=last_index_name;
+    int SectionNamesIndex=GetHeader(*temp,HeaderFusion,".shstrtab",n_size+nbSection1);
     free(SectionFusion[SectionNamesIndex].content);
-    SectionFusion[SectionNamesIndex].content=temp.content;
+    SectionFusion[SectionNamesIndex].content=New_Names;
     SectionFusion[SectionNamesIndex].size=last_index_name;    
-    SectionFusion = realloc(SectionFusion,n_size+nbSection1);
-    HeaderFusion = realloc(HeaderFusion,n_size+nbSection1);
+    HeaderFusion = realloc(HeaderFusion,sizeof(Elf32_Shdr)*(n_size+nbSection1));
+    SectionFusion = realloc(SectionFusion,sizeof(SectionContent)*(n_size+nbSection1));
     FusionContent* FusionResult = malloc(sizeof(FusionContent));
     FusionResult->contents=SectionFusion;
     FusionResult->headers=HeaderFusion;

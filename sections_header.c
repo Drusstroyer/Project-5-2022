@@ -70,7 +70,7 @@ void display_sections_header(Elf32_Ehdr* elf_header,Elf32_Shdr* sections_header,
    int i=0;
    do
    {
-      i++;                
+      i++;            
       if(!strcmp(&Names.content[Sections[i].sh_name],section_name))
       {            
             return i;

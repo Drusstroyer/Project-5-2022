@@ -1,6 +1,5 @@
 #include "sections_relocation.h"
 
-
 Elf32_Rela *ReadRelatab(FILE *f_elf, Elf32_Shdr *section_header, int Reltab_index)
 {
    SectionContent *Content = GetContent(f_elf, section_header[Reltab_index]); // name stocked in content->name
@@ -45,7 +44,7 @@ Elf32_Rel *ReadReltab(FILE *f_elf, Elf32_Shdr *section_header, int Reltab_index)
 //    }
 // }
 
-void ShowRelatab(Elf32_Rela *reloc_tab, int nbRel, SectionContent SymbolName, Elf32_Sym *symbol_tab, Elf32_Shdr *section_header, SectionContent SectionName)
+void ShowRelatab(Elf32_Rela *reloc_tab, int nbRel, SectionContent SymbolName, Elf32_Sym *symbol_tab, Elf32_Shdr *section_header, SectionContent SectionName, char *name)
 {
    printf("Relocation section \'.rela.text\' at offset 0x%x contains %i entries:\n", reloc_tab->r_offset, nbRel);
    printf("  Offset          Info           Type           Sym. Value    Sym. Name + Addend\n");
@@ -55,17 +54,19 @@ void ShowRelatab(Elf32_Rela *reloc_tab, int nbRel, SectionContent SymbolName, El
       printf(" %08X", reloc_tab[i].r_info);                                     // info
       printf("    %s", ENUM_TableRelocType(ELF32_R_TYPE(reloc_tab[i].r_info))); // type : SECTION, NOTYPE, ...
       printf(" %08X", symbol_tab[ELF32_R_SYM(reloc_tab[i].r_info)].st_value);
-      //printf(" %s + %d", &SymbolName.content[symbol_tab[ELF32_R_SYM(reloc_tab[i].r_info)].st_name], reloc_tab[i].r_addend);
-      if (symbol_tab[ELF32_R_SYM(reloc_tab[i].r_info)].st_name!=STN_UNDEF)
+      // printf(" %s + %d", &SymbolName.content[symbol_tab[ELF32_R_SYM(reloc_tab[i].r_info)].st_name], reloc_tab[i].r_addend);
+      if (symbol_tab[ELF32_R_SYM(reloc_tab[i].r_info)].st_name != STN_UNDEF)
       {
          printf("    %6s", &SymbolName.content[symbol_tab[ELF32_R_SYM(reloc_tab[i].r_info)].st_name]);
       }
       else
       {
-         if(!strcmp(&SectionName.content[section_header[ELF32_R_SYM(reloc_tab[i].r_info)].sh_name],".rela.text")){
-            printf("    %6s", &SectionName.content[section_header[ELF32_R_SYM(reloc_tab[i].r_info)].sh_name+5]);
+         if (!strcmp(&SectionName.content[section_header[ELF32_R_SYM(reloc_tab[i].r_info)].sh_name], ".rela.text"))
+         {
+            printf("    %6s", &SectionName.content[section_header[ELF32_R_SYM(reloc_tab[i].r_info)].sh_name + 5]);
          }
-         else{
+         else
+         {
             printf("    %6s", &SectionName.content[section_header[ELF32_R_SYM(reloc_tab[i].r_info)].sh_name]);
          }
       }
@@ -73,9 +74,10 @@ void ShowRelatab(Elf32_Rela *reloc_tab, int nbRel, SectionContent SymbolName, El
    }
 }
 
-void ShowReltab(Elf32_Rel *reloc_tab, int nbRel, SectionContent SymbolName, Elf32_Sym *symbol_tab, Elf32_Shdr *section_header, SectionContent SectionName)
+void ShowReltab(Elf32_Rel *reloc_tab, int nbRel, SectionContent SymbolName, Elf32_Sym *symbol_tab, Elf32_Shdr *section_header, SectionContent SectionName, char *name)
 {
-   printf("Relocation section \'.rel.text\' at offset 0x%x contains %i entries:\n", reloc_tab->r_offset, nbRel);
+   // printf("Relocation section \'.rel.text\' at offset 0x%x contains %i entries:\n", reloc_tab->r_offset, nbRel);
+   printf("Relocation section \'%s\' at offset 0x%x contains %i entries:\n", name, reloc_tab->r_offset, nbRel);
    printf(" Offset     Info    Type            Sym.Value  Sym. Name\n");
    for (int i = 0; i < nbRel; i++) // check boucle condition
    {
@@ -83,22 +85,61 @@ void ShowReltab(Elf32_Rel *reloc_tab, int nbRel, SectionContent SymbolName, Elf3
       printf("  %08X", reloc_tab[i].r_info);                                 // info
       printf(" %s", ENUM_TableRelocType(ELF32_R_TYPE(reloc_tab[i].r_info))); // type : SECTION, NOTYPE, ...*
       printf("      %08X", symbol_tab[ELF32_R_SYM(reloc_tab[i].r_info)].st_value);
-      if (symbol_tab[ELF32_R_SYM(reloc_tab[i].r_info)].st_name!=STN_UNDEF)
+      if (symbol_tab[ELF32_R_SYM(reloc_tab[i].r_info)].st_name != STN_UNDEF)
       {
          printf("    %6s", &SymbolName.content[symbol_tab[ELF32_R_SYM(reloc_tab[i].r_info)].st_name]);
       }
       else
       {
-         if(!strcmp(&SectionName.content[section_header[ELF32_R_SYM(reloc_tab[i].r_info)].sh_name],".rel.text")){
-            printf("    %6s", &SectionName.content[section_header[ELF32_R_SYM(reloc_tab[i].r_info)].sh_name+4]);
+         if (!strncmp(&SectionName.content[section_header[ELF32_R_SYM(reloc_tab[i].r_info)].sh_name], ".rela", 5))
+         {
+            printf("    %6s", &SectionName.content[section_header[ELF32_R_SYM(reloc_tab[i].r_info)].sh_name + 5]);
          }
-         else{
+         if (!strncmp(&SectionName.content[section_header[ELF32_R_SYM(reloc_tab[i].r_info)].sh_name], ".rel", 4))
+         {
+            printf("    %6s", &SectionName.content[section_header[ELF32_R_SYM(reloc_tab[i].r_info)].sh_name + 4]);
+         }
+         else
+         {
             printf("    %6s", &SectionName.content[section_header[ELF32_R_SYM(reloc_tab[i].r_info)].sh_name]);
          }
       }
       printf(" \n");
    }
 }
+
+char *cut_rel_name(char *name)
+{
+   char s[2] = ".";
+   char *token;
+   if (!strcmp(name, ""))
+   {
+      token = strtok(name + 1, s);
+   }
+   return token;
+}
+
+// int compare_rel_strings(char *name, char *token)
+// {
+//    int i = 0;
+//    if (name[i] != "." && token[i] != ".")
+//    {
+//       return 0;
+//    }
+//    while ((name[i + 1] == token[i + 1]) && (token[i + 1] != "\0") && (name[i + 1] != "\0"))
+//    {
+//       i++;
+//    }
+//    if (i == (strlen(token) - 1))
+//    {
+//       i++;
+//    }
+//    else
+//    {
+//       i = 0;
+//    }
+//    return i;
+// }
 
 char *ENUM_TableRelocType(Elf32_Word type)
 {

@@ -4,16 +4,30 @@
 
 typedef struct t_SectionContent
 {
-    char* name;
-    char* content;
+    char *name;
+    char *content;
     int size;
-}SectionContent;
+} SectionContent;
 
 typedef struct t_FusionContent
 {
-    Elf32_Shdr* headers;
-    SectionContent* contents;
+    Elf32_Shdr *header;
+    SectionContent *contents;
     int nb;
-}FusionContent;
+} FusionContent;
+
+typedef struct t_RelocTab
+{
+    Elf32_Shdr *header;
+    Elf32_Rel *Rel;
+    Elf32_Rela *Rela;
+    int size;
+} RelocTab;
+
+typedef struct t_FusionReloc
+{
+    RelocTab *tab;
+    int size;
+} FusionReloc;
 
 #endif

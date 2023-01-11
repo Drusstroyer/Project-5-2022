@@ -11,7 +11,7 @@ typedef struct t_SectionContent
 
 typedef struct t_FusionContent
 {
-    Elf32_Shdr *header;
+    Elf32_Shdr *headers;
     SectionContent *contents;
     int nb;
 } FusionContent;

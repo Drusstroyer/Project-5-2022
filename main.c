@@ -76,7 +76,7 @@ int main(int argc, char *argv[])
         {
             display_sections_header(header, section_header, *SectionName);
         }
-        fprintf(stderr,"hey1");
+        // fprintf(stderr,"hey1");
         int i = -1;        
         int Reltab_array[100];
         int Reltab_array_index=0;
@@ -115,14 +115,12 @@ int main(int argc, char *argv[])
                 if (section_header[Reltab_array[c]].sh_type == SHT_RELA)
                 {
                     Elf32_Rela *reloc_tab = ReadRelatab(f_elf, section_header, Reltab_array[c]);
-                    printf("\n");
-                    ShowRelatab(reloc_tab, section_header[Reltab_array[c]].sh_size / section_header[Reltab_array[c]].sh_entsize, *SymbolsName, tmp, section_header, *SectionName);
+                    ShowRelatab(reloc_tab, section_header[Reltab_array[c]].sh_size / section_header[Reltab_array[c]].sh_entsize, *SymbolsName, tmp, section_header, *SectionName, &SectionName->content[section_header[Reltab_array[c]].sh_name]);
                 }
                 else if (section_header[Reltab_array[c]].sh_type == SHT_REL)
                 {
                     Elf32_Rel *reloc_tab_rel = ReadReltab(f_elf, section_header, Reltab_array[c]);
-                    printf("\n");
-                    ShowReltab(reloc_tab_rel, section_header[Reltab_array[c]].sh_size / section_header[Reltab_array[c]].sh_entsize, *SymbolsName, tmp, section_header, *SectionName);
+                    ShowReltab(reloc_tab_rel, section_header[Reltab_array[c]].sh_size / section_header[Reltab_array[c]].sh_entsize, *SymbolsName, tmp, section_header, *SectionName, &SectionName->content[section_header[Reltab_array[c]].sh_name]);
                 }
             }
         }

@@ -46,14 +46,15 @@ Elf32_Rel *ReadReltab(FILE *f_elf, Elf32_Shdr *section_header, int Reltab_index)
 
 void ShowRelatab(Elf32_Rela *reloc_tab, int nbRel, SectionContent SymbolName, Elf32_Sym *symbol_tab, Elf32_Shdr *section_header, SectionContent SectionName, char *name)
 {
+   printf(" \n");
    printf("Relocation section \'.rela.text\' at offset 0x%x contains %i entries:\n", reloc_tab->r_offset, nbRel);
    printf("  Offset          Info           Type           Sym. Value    Sym. Name + Addend\n");
    for (int i = 0; i < nbRel; i++) // check boucle condition
    {
-      printf("%08X", reloc_tab[i].r_offset);                                    // offset
-      printf(" %08X", reloc_tab[i].r_info);                                     // info
+      printf("%08x", reloc_tab[i].r_offset);                                    // offset
+      printf(" %08x", reloc_tab[i].r_info);                                     // info
       printf("    %s", ENUM_TableRelocType(ELF32_R_TYPE(reloc_tab[i].r_info))); // type : SECTION, NOTYPE, ...
-      printf(" %08X", symbol_tab[ELF32_R_SYM(reloc_tab[i].r_info)].st_value);
+      printf(" %08x", symbol_tab[ELF32_R_SYM(reloc_tab[i].r_info)].st_value);
       // printf(" %s + %d", &SymbolName.content[symbol_tab[ELF32_R_SYM(reloc_tab[i].r_info)].st_name], reloc_tab[i].r_addend);
       if (symbol_tab[ELF32_R_SYM(reloc_tab[i].r_info)].st_name != STN_UNDEF)
       {
@@ -63,7 +64,7 @@ void ShowRelatab(Elf32_Rela *reloc_tab, int nbRel, SectionContent SymbolName, El
       {
          if (!strcmp(&SectionName.content[section_header[ELF32_R_SYM(reloc_tab[i].r_info)].sh_name], ".rela.text"))
          {
-            printf("    %6s", &SectionName.content[section_header[ELF32_R_SYM(reloc_tab[i].r_info)].sh_name + 5]);
+            printf("    %-6s", &SectionName.content[section_header[ELF32_R_SYM(reloc_tab[i].r_info)].sh_name + 5]);
          }
          else
          {
@@ -76,32 +77,32 @@ void ShowRelatab(Elf32_Rela *reloc_tab, int nbRel, SectionContent SymbolName, El
 
 void ShowReltab(Elf32_Rel *reloc_tab, int nbRel, SectionContent SymbolName, Elf32_Sym *symbol_tab, Elf32_Shdr *section_header, SectionContent SectionName, char *name)
 {
-   // printf("Relocation section \'.rel.text\' at offset 0x%x contains %i entries:\n", reloc_tab->r_offset, nbRel);
+   printf(" \n");
    printf("Relocation section \'%s\' at offset 0x%x contains %i entries:\n", name, reloc_tab->r_offset, nbRel);
    printf(" Offset     Info    Type            Sym.Value  Sym. Name\n");
    for (int i = 0; i < nbRel; i++) // check boucle condition
    {
-      printf("%08X", reloc_tab[i].r_offset);                                 // offset
-      printf("  %08X", reloc_tab[i].r_info);                                 // info
-      printf(" %s", ENUM_TableRelocType(ELF32_R_TYPE(reloc_tab[i].r_info))); // type : SECTION, NOTYPE, ...*
-      printf("      %08X", symbol_tab[ELF32_R_SYM(reloc_tab[i].r_info)].st_value);
+      printf("%08x", reloc_tab[i].r_offset);                                 // offset
+      printf("  %08x", reloc_tab[i].r_info);                                 // info
+      printf(" %-12s", ENUM_TableRelocType(ELF32_R_TYPE(reloc_tab[i].r_info))); // type : SECTION, NOTYPE, ...*
+      printf("      %08x", symbol_tab[ELF32_R_SYM(reloc_tab[i].r_info)].st_value);
       if (symbol_tab[ELF32_R_SYM(reloc_tab[i].r_info)].st_name != STN_UNDEF)
       {
-         printf("    %6s", &SymbolName.content[symbol_tab[ELF32_R_SYM(reloc_tab[i].r_info)].st_name]);
+         printf("   %2s", &SymbolName.content[symbol_tab[ELF32_R_SYM(reloc_tab[i].r_info)].st_name]);
       }
       else
       {
          if (!strncmp(&SectionName.content[section_header[ELF32_R_SYM(reloc_tab[i].r_info)].sh_name], ".rela", 5))
          {
-            printf("    %6s", &SectionName.content[section_header[ELF32_R_SYM(reloc_tab[i].r_info)].sh_name + 5]);
+            printf("   %2s", &SectionName.content[section_header[ELF32_R_SYM(reloc_tab[i].r_info)].sh_name + 5]);
          }
          if (!strncmp(&SectionName.content[section_header[ELF32_R_SYM(reloc_tab[i].r_info)].sh_name], ".rel", 4))
          {
-            printf("    %6s", &SectionName.content[section_header[ELF32_R_SYM(reloc_tab[i].r_info)].sh_name + 4]);
+            printf("   %2s", &SectionName.content[section_header[ELF32_R_SYM(reloc_tab[i].r_info)].sh_name + 4]);
          }
          else
          {
-            printf("    %6s", &SectionName.content[section_header[ELF32_R_SYM(reloc_tab[i].r_info)].sh_name]);
+            printf("   %2s", &SectionName.content[section_header[ELF32_R_SYM(reloc_tab[i].r_info)].sh_name]);
          }
       }
       printf(" \n");
@@ -160,6 +161,21 @@ char *ENUM_TableRelocType(Elf32_Word type)
    case R_ARM_JUMP24:
       strcpy(c_word, "R_ARM_JUMP24");
       break;
+   case R_ARM_ABS32:
+      strcpy(c_word, "R_ARM_ABS32");
+      break;
+   case R_ARM_ABS16:
+      strcpy(c_word, "R_ARM_ABS16");
+      break;
+   case R_ARM_ABS12:
+      strcpy(c_word, "R_ARM_ABS12");
+      break;
+   case R_ARM_ABS8:
+      strcpy(c_word, "R_ARM_ABS8");
+      break;
+   case R_ARM_ABS32_NOI:
+      strcpy(c_word, "R_ARM_ABS32");
+      break;
    case R_ARM_PREL31:
       strcpy(c_word, "R_ARM_PREL31");
       break;
@@ -171,9 +187,6 @@ char *ENUM_TableRelocType(Elf32_Word type)
       break;
    case R_ARM_MOVW_ABS_NC:
       strcpy(c_word, "R_ARM_MOVW_ABS_NC");
-      break;
-   case R_ARM_ABS32:
-      strcpy(c_word, "R_ARM_ABS32");
       break;
    case R_ARM_THM_JUMP24:
       strcpy(c_word, "R_ARM_THM_JUMP24");
@@ -189,6 +202,9 @@ char *ENUM_TableRelocType(Elf32_Word type)
       break;
    case R_ARM_THM_JUMP6:
       strcpy(c_word, "R_ARM_THM_JUMP6");
+      break;
+   case R_ARM_THM_PC8:
+      strcpy(c_word, "R_ARM_THM_PC8");
       break;
    }
    return c_word;
